@@ -11,60 +11,81 @@
 #import "PlatformRouterImp.h"
 #import <flutter_boost/FlutterBoost.h>
 
-@interface AppDelegate ()
-
+@interface AppDelegate (){
+    FlutterPluginAppLifeCycleDelegate *_lifeCycleDelegate;
+}
 @end
 
 @implementation AppDelegate
 
+- (instancetype)init {
+    if (self = [super init]) {
+        _lifeCycleDelegate = [[FlutterPluginAppLifeCycleDelegate alloc] init];
+    }
+    return self;
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.backgroundColor = [UIColor whiteColor];
+
+    UINavigationController *naviController = [[UINavigationController alloc] init];
+    naviController.navigationBar.hidden = YES;
+    naviController.navigationBar.barStyle = UIBarStyleBlack;
+    
+    
     PlatformRouterImp *router = [PlatformRouterImp new];
-    [FlutterBoostPlugin.sharedInstance startFlutterWithPlatform:router
-                                                        onStart:^(FlutterEngine *engine) {
-                                                            
-                                                        }];
-    
-    self.window = [[UIWindow alloc] initWithFrame: [UIScreen mainScreen].bounds];
-    
-    
+    router.navigationController = naviController;
+    self.window.rootViewController = naviController;
+
+    [FlutterBoostPlugin.sharedInstance startFlutterWithPlatform:router onStart:^(FlutterEngine *engine) {
+        FLBFlutterViewContainer *flutterRootController = FLBFlutterViewContainer.new;
+        [flutterRootController setName:@"tab" params:@{}];
+        [naviController setViewControllers:@[flutterRootController]];
+    }];
     [self.window makeKeyAndVisible];
+//
+//    self.window = [[UIWindow alloc] initWithFrame: [UIScreen mainScreen].bounds];
+//
+//
+//    [self.window makeKeyAndVisible];
+//
+//
+//    UIViewControllerDemo *vc = [[UIViewControllerDemo alloc] initWithNibName:@"UIViewControllerDemo" bundle:[NSBundle mainBundle]];
+//    vc.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"hybrid" image:nil tag:0];
+//
+//
+//    FLBFlutterViewContainer *fvc = FLBFlutterViewContainer.new;
+//    [fvc setName:@"tab" params:@{}];
+//    fvc.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"flutter_tab" image:nil tag:1];
+//
+//
+//    UITabBarController *tabVC = [[UITabBarController alloc] init];
+//    UINavigationController *rvc = [[UINavigationController alloc] initWithRootViewController:tabVC];
+//
+//
+//    router.navigationController = rvc;
+//
+//    tabVC.viewControllers = @[vc,fvc];
+//
+//    self.window.rootViewController = rvc;
+//
+//
+//
+//
+//
+//
+//
+//    UIButton *nativeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//    nativeButton.frame = CGRectMake(self.window.frame.size.width * 0.5 - 50, 200, 100, 45);
+//    nativeButton.backgroundColor = [UIColor redColor];
+//    [nativeButton setTitle:@"push native" forState:UIControlStateNormal];
+//    [nativeButton addTarget:self action:@selector(pushNative) forControlEvents:UIControlEventTouchUpInside];
+//    [self.window addSubview:nativeButton];
+//
     
-   
-    UIViewControllerDemo *vc = [[UIViewControllerDemo alloc] initWithNibName:@"UIViewControllerDemo" bundle:[NSBundle mainBundle]];
-    vc.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"hybrid" image:nil tag:0];
-   
-    
-    FLBFlutterViewContainer *fvc = FLBFlutterViewContainer.new;
-    [fvc setName:@"tab" params:@{}];
-    fvc.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"flutter_tab" image:nil tag:1];
-    
-    
-    UITabBarController *tabVC = [[UITabBarController alloc] init];
-    UINavigationController *rvc = [[UINavigationController alloc] initWithRootViewController:tabVC];
-    
-   
-    router.navigationController = rvc;
-    
-    tabVC.viewControllers = @[vc,fvc];
-    
-    self.window.rootViewController = rvc;
-    
-    
-  
-    
-    
-    
-    
-    UIButton *nativeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    nativeButton.frame = CGRectMake(self.window.frame.size.width * 0.5 - 50, 200, 100, 45);
-    nativeButton.backgroundColor = [UIColor redColor];
-    [nativeButton setTitle:@"push native" forState:UIControlStateNormal];
-    [nativeButton addTarget:self action:@selector(pushNative) forControlEvents:UIControlEventTouchUpInside];
-    [self.window addSubview:nativeButton];
-    
-    
-    return YES;
+    return [_lifeCycleDelegate application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
 - (void)pushNative

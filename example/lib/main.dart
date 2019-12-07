@@ -17,18 +17,8 @@ class _MyAppState extends State<MyApp> {
     super.initState();
 
     FlutterBoost.singleton.registerPageBuilders({
-      'first': (pageName, params, _) => FirstRouteWidget(),
       'second': (pageName, params, _) => SecondRouteWidget(),
-      'tab': (pageName, params, _) => TabRouteWidget(),
-      'platformView': (pageName, params, _) => PlatformRouteWidget(),
-      'flutterFragment': (pageName, params, _) => FragmentRouteWidget(params),
-      ///可以在native层通过 getContainerParams 来传递参数
-      'flutterPage': (pageName, params, _) {
-        print("flutterPage params:$params");
-
-        return FlutterRouteWidget(params:params);
-      },
-    });
+      'tab': (pageName, params, _) => TabRouteWidget(),});
   }
 
   @override
@@ -36,7 +26,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
         title: 'Flutter Boost example',
         builder: FlutterBoost.init(postPush: _onRoutePushed),
-        home: Container());
+        home: TabRouteWidget());
   }
 
   void _onRoutePushed(
